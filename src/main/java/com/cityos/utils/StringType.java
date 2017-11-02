@@ -1,0 +1,5 @@
+package com.cityos.utils;
+
+public enum StringType {
+  DIGIT, LETTER, UPPERCASE, LOWERCASE, DIGITLETTER, ASCII, ASCII_EXTEND, ASCII_PRINTABLE, CHINESE
+}
