@@ -1,4 +1,4 @@
-package com.cityos.entity;
+package com.cityos.dg.entity;
 
 import java.util.Date;
 import lombok.AllArgsConstructor;

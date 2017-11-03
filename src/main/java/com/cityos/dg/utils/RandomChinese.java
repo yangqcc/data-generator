@@ -1,4 +1,4 @@
-package com.cityos.utils;
+package com.cityos.dg.utils;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Random;

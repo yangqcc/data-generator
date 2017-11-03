@@ -1,13 +1,19 @@
-package com.cityos.service;
+package com.cityos.dg.service.tasks;
 
-import com.cityos.utils.ExtraRandom;
-import com.cityos.utils.RandomChinese;
-import com.cityos.utils.RandomEmail;
+import com.cityos.dg.utils.ExtraRandom;
+import com.cityos.dg.utils.RandomChinese;
+import com.cityos.dg.utils.RandomEmail;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.Random;
+import java.util.concurrent.RecursiveAction;
+import javax.sql.DataSource;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 /**
  * <p>title:</p> <p>description:</p>
@@ -16,9 +22,10 @@ import java.util.Random;
  * @date Created in 2017-11-02
  * @modified By yangqc
  */
-public class TaksRunnable implements Runnable {
-
-  private final DbInfo dbInfo;
+@Component
+@Scope(value = "prototype")
+@Slf4j
+public class InsertTask extends RecursiveAction {
 
   private static final Random random = new Random(20);
 
@@ -28,18 +35,32 @@ public class TaksRunnable implements Runnable {
 
   private final int executeBatchCount = 2000;
 
-  private long timeCost;
+  private final int threshold;
 
-  /**
-   * 插入数量
-   */
-  public TaksRunnable(String tableName, int count) {
+  private final DataSource dataSource;
+
+  @Autowired
+  public InsertTask(String tableName, int count, DataSource dataSource) {
     if (count <= 0) {
       throw new IllegalArgumentException("count不能小于0!");
     }
     this.tableName = tableName;
     this.count = count;
-    dbInfo = new DbInfo();
+    this.dataSource = dataSource;
+    this.threshold = (count - 1) / Runtime.getRuntime().availableProcessors() + 1;
+  }
+
+  /**
+   * 插入数量
+   */
+  private InsertTask(String tableName, int count, int threshold, DataSource dataSource) {
+    if (count <= 0) {
+      throw new IllegalArgumentException("count不能小于0!");
+    }
+    this.tableName = tableName;
+    this.count = count;
+    this.threshold = threshold;
+    this.dataSource = dataSource;
   }
 
   /**
@@ -49,18 +70,18 @@ public class TaksRunnable implements Runnable {
     return random.nextInt(30);
   }
 
-  @Override
-  public void run() {
-    System.out.println("开始插入" + count);
+  public void insert() {
+    log.info("开始插入:" + count);
     long startTime = System.currentTimeMillis();
-    Date date = new Date();
+    Connection connection = null;
     PreparedStatement ps = null;
+    Date date = new Date();
     int i = 0;
-    Connection connection = dbInfo.getConnection();
     String sql = String.format(
         "insert into %s (chsname,enname,birthday,age,weight,salary,sex,email) values(?,?,?,?,?,?,?,?)",
         tableName);
     try {
+      connection = dataSource.getConnection();
       connection.setAutoCommit(false);
       ps = connection.prepareStatement(sql);
       for (; i < count; i++) {
@@ -99,9 +120,26 @@ public class TaksRunnable implements Runnable {
       }
     }
     long endTime = System.currentTimeMillis();
-    System.out.println(
+    log.info(
         "插入:" + count + ", 耗时:" + (endTime - startTime) + ", 线程:" + Thread.currentThread()
             .getName());
-    timeCost = endTime - startTime;
   }
+
+  @Override
+  protected void compute() {
+    if (count <= threshold) {
+      this.insert();
+    } else {
+      int middle = (count - 1) / 2 + 1;
+      InsertTask leftTask = new InsertTask(tableName, middle, threshold, dataSource);
+      InsertTask rightTask = new InsertTask(tableName, middle, threshold, dataSource);
+      invokeAll(leftTask, rightTask);
+      if (leftTask.isCompletedNormally() && rightTask.isCompletedNormally()) {
+        return;
+      } else {
+        throw new RuntimeException("出错！");
+      }
+    }
+  }
+
 }
