@@ -3,6 +3,7 @@ package com.cityos.dg.config;
 import java.util.concurrent.ForkJoinPool;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 
 /**
  * <p>title:</p> <p>description:</p>
@@ -15,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
 public class TaskConfig {
 
   @Bean(name = "forkJoinPool")
+  @Scope(scopeName = "singleton")
   public ForkJoinPool getForkJoinPool() {
     return new ForkJoinPool();
   }

@@ -41,7 +41,7 @@ public class DataBaseOperateTimer {
   /**
    * 第一次延迟1秒执行，当执行完后24小时再执行 插入十万条数据
    */
-  @Scheduled(initialDelay = 1000 * 60 * 10, fixedDelay = 1000 * 60 * 24)
+  @Scheduled(initialDelay = 1000, fixedDelay = 1000 * 60 * 60 * 24)
   public void insertUser1() {
     int insertCount = 100000;
     InsertTask insertTask = applicationContext
@@ -56,7 +56,7 @@ public class DataBaseOperateTimer {
   /**
    * 第一次延迟10分钟，执行完后24小时再执行 插入一百万条数据
    */
-  @Scheduled(initialDelay = 1000 * 60 * 10, fixedDelay = 1000 * 60 * 24)
+  @Scheduled(initialDelay = 1000 * 60 * 10, fixedDelay = 1000 * 60 * 60 * 24)
   public void insertUser2() {
     int insertCount = 1000000;
     InsertTask insertTask = applicationContext
@@ -71,7 +71,7 @@ public class DataBaseOperateTimer {
   /**
    * 第一次延迟10分钟，执行完成后24小时再执行 插入一千万条数据
    */
-  @Scheduled(initialDelay = 1000, fixedDelay = 1000 * 60 * 24)
+  @Scheduled(initialDelay = 1000 * 60 * 30, fixedDelay = 1000 * 60 * 60 * 24)
   public void insertUser3() {
     int insertCount = 10000000;
     InsertTask insertTask = applicationContext
