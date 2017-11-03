@@ -8,7 +8,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.Random;
-import java.util.concurrent.RecursiveAction;
 
 /**
  * <p>title:</p> <p>description:</p>
@@ -17,8 +16,7 @@ import java.util.concurrent.RecursiveAction;
  * @date Created in 2017-11-02
  * @modified By yangqc
  */
-public class InsertTask extends RecursiveAction {
-
+public class TaksRunnable implements Runnable {
 
   private final DbInfo dbInfo;
 
@@ -30,30 +28,17 @@ public class InsertTask extends RecursiveAction {
 
   private final int executeBatchCount = 2000;
 
-  private final int threshold;
-
   private long timeCost;
-
-  public InsertTask(String tableName, int count) {
-    if (count <= 0) {
-      throw new IllegalArgumentException("count不能小于0!");
-    }
-    this.tableName = tableName;
-    this.count = count;
-    this.threshold = (count - 1) / Runtime.getRuntime().availableProcessors() + 1;
-    dbInfo = new DbInfo();
-  }
 
   /**
    * 插入数量
    */
-  private InsertTask(String tableName, int count, int threshold) {
+  public TaksRunnable(String tableName, int count) {
     if (count <= 0) {
       throw new IllegalArgumentException("count不能小于0!");
     }
     this.tableName = tableName;
     this.count = count;
-    this.threshold = threshold;
     dbInfo = new DbInfo();
   }
 
@@ -64,7 +49,8 @@ public class InsertTask extends RecursiveAction {
     return random.nextInt(30);
   }
 
-  public void insert() {
+  @Override
+  public void run() {
     System.out.println("开始插入" + count);
     long startTime = System.currentTimeMillis();
     Date date = new Date();
@@ -118,22 +104,4 @@ public class InsertTask extends RecursiveAction {
             .getName());
     timeCost = endTime - startTime;
   }
-
-  @Override
-  protected void compute() {
-    if (count <= threshold) {
-      this.insert();
-    } else {
-      int middle = (count - 1) / 2 + 1;
-      InsertTask leftTask = new InsertTask(tableName, middle, threshold);
-      InsertTask rightTask = new InsertTask(tableName, middle, threshold);
-      invokeAll(leftTask, rightTask);
-      if (leftTask.isCompletedNormally() && rightTask.isCompletedNormally()) {
-        return;
-      } else {
-        throw new RuntimeException("出处！");
-      }
-    }
-  }
-
 }

@@ -36,6 +36,7 @@ public class DbInfo {
       path = pro.getProperty("dbPath");
       instance = pro.getProperty("dbInstance");
       url = String.format("jdbc:sqlserver://%s;DatabaseName=%s", path, instance);
+//      url = String.format("jdbc:mysql://%s/%s?useSSL=false", path, instance);
       username = pro.getProperty("dbUserName");
       password = pro.getProperty("dbPassword");
     } catch (IOException e) {
