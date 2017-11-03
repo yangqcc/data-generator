@@ -10,7 +10,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
- * <p>title:</p> <p>description:定时任务</p>
+ * <p>title:</p>
+ * <p>description:定时任务</p>
  *
  * @author yangqc
  * @date Created in 2017-11-03
