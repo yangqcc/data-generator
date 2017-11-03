@@ -8,7 +8,7 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     #连接池的配置信息
     #初始化大小，最小，最大
-    initialSize: 30
+    initialSize: 10
     minIdle: 10
     maxActive: 30
     ##配置获取连接等待超时的时间
