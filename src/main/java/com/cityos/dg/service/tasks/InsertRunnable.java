@@ -26,6 +26,7 @@ public class InsertRunnable implements Runnable {
     long t1 = System.currentTimeMillis();
     ForkJoinTask forkJoinTask = forkJoinPool.submit(insertTask);
     forkJoinTask.join();
-    System.out.println(System.currentTimeMillis() - t1 + ",终极耗时!");
+    System.out
+        .println("插入" + insertTask.getCount() + "条数据,最终耗时:" + (System.currentTimeMillis() - t1));
   }
 }

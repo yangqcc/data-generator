@@ -10,8 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
- * <p>title:</p>
- * <p>description:定时任务</p>
+ * <p>title:</p> <p>description:定时任务</p>
  *
  * @author yangqc
  * @date Created in 2017-11-03
@@ -40,10 +39,9 @@ public class DataBaseOperateTimer {
   }*/
 
   /**
-   * 第一次延迟1秒执行，当执行完后24小时再执行
+   * 第一次延迟1秒执行，当执行完后24小时再执行 插入十万条数据
    */
-  //TODO 暂时十秒执行一次
-  @Scheduled(initialDelay = 1000, fixedDelay = 10000)
+  @Scheduled(initialDelay = 1000 * 60 * 10, fixedDelay = 1000 * 60 * 24)
   public void insertUser1() {
     int insertCount = 100000;
     InsertTask insertTask = applicationContext
@@ -56,7 +54,7 @@ public class DataBaseOperateTimer {
   }
 
   /**
-   * 第一次延迟10分钟，执行完后24小时再执行
+   * 第一次延迟10分钟，执行完后24小时再执行 插入一百万条数据
    */
   @Scheduled(initialDelay = 1000 * 60 * 10, fixedDelay = 1000 * 60 * 24)
   public void insertUser2() {
@@ -71,9 +69,9 @@ public class DataBaseOperateTimer {
   }
 
   /**
-   * 第一次延迟10分钟，执行完成后24小时再执行
+   * 第一次延迟10分钟，执行完成后24小时再执行 插入一千万条数据
    */
-  @Scheduled(initialDelay = 1000 * 60 * 10, fixedDelay = 1000 * 60 * 24)
+  @Scheduled(initialDelay = 1000, fixedDelay = 1000 * 60 * 24)
   public void insertUser3() {
     int insertCount = 10000000;
     InsertTask insertTask = applicationContext

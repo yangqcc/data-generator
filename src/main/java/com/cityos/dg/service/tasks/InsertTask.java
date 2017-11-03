@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.RecursiveAction;
 import javax.sql.DataSource;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -29,6 +30,7 @@ public class InsertTask extends RecursiveAction {
 
   private static final Random random = new Random(20);
 
+  @Getter
   private final int count;
 
   private final String tableName;
