@@ -42,7 +42,8 @@ public class DataBaseOperateTimer {
   /**
    * 第一次延迟1秒执行，当执行完后24小时再执行
    */
-  @Scheduled(initialDelay = 1000, fixedDelay = 1000 * 60 * 24)
+  //TODO 暂时十秒执行一次
+  @Scheduled(initialDelay = 1000, fixedDelay = 10000)
   public void insertUser1() {
     int insertCount = 100000;
     InsertTask insertTask = applicationContext
