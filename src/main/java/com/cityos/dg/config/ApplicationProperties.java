@@ -8,6 +8,7 @@ import org.springframework.web.cors.CorsConfiguration;
 
 /**
  * 当前应用相关配置
+ * @author yangqc
  */
 @ConfigurationProperties(prefix = "application", ignoreUnknownFields = false)
 @Component
