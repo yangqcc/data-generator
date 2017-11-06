@@ -14,7 +14,7 @@ spec:
         name: cityos-dg
     spec:
       containers:
-      - name: cityos-rc
+      - name: cityos-dg
         image: reg.icity-os.com/cityos/dg:1.0
         imagePullPolicy: Always
         ports:
