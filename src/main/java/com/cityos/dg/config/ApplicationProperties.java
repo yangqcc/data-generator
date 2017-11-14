@@ -26,6 +26,13 @@ public class ApplicationProperties {
     @Getter
     private final Async async = new Async();
 
+    /**
+     * influxdb地址
+     */
+    @Getter
+    @Setter
+    private String influxDBUrl;
+
 
     public static class Async {
 
