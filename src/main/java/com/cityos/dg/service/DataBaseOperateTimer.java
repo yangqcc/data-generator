@@ -1,13 +1,13 @@
 package com.cityos.dg.service;
 
-import com.cityos.dg.utils.ExtraRandom;
+import com.cityos.dg.service.tasks.InfluxDBInsertRunnable;
+import com.cityos.dg.service.tasks.InfluxDBInsertTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
 import java.util.concurrent.ForkJoinPool;
 
 /**
@@ -32,22 +32,15 @@ public class DataBaseOperateTimer {
     @Autowired
     private InfluxInsertService influxInsertService;
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(initialDelay = 3000, fixedRate = 1000 * 60 * 24)
     public void timerRate() {
-        Map value;
-        List list = new ArrayList<>();
-        final int count = 500000;
-        for (int i = 0; i < count; i++) {
-            value = new HashMap<>();
-            value.put("veh_license", ExtraRandom.nextString(30, "letter"));
-            value.put("bus_line_id", Integer.parseInt(ExtraRandom.nextString(9, "digit")));
-            value.put("ori_flag", "2");
-            value.put("run_state", "2");
-            value.put("station_id", Integer.parseInt(ExtraRandom.nextString(9, "digit")));
-            value.put("gps_report_dt", new Date().getTime());
-            list.add(value);
-        }
-        influxInsertService.insert(null, list);
+        int insertCount = 300000000;
+        InfluxDBInsertTask influxDBInsertTask = applicationContext
+                .getBean(InfluxDBInsertTask.class, insertCount,
+                        influxInsertService);
+        InfluxDBInsertRunnable insertRunnable = applicationContext
+                .getBean(InfluxDBInsertRunnable.class, influxDBInsertTask, forkJoinPool);
+        insertRunnable.run();
     }
     //每天20点16分50秒时执行
 /*  @Scheduled(cron = "50 16 20 * * ?")

@@ -2,7 +2,6 @@ package com.cityos.dg.service;
 
 import com.cityos.dg.config.ApplicationProperties;
 import com.cityos.dg.config.InfluxDBConstants;
-import com.cityos.dg.utils.ExtraRandom;
 import lombok.extern.slf4j.Slf4j;
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;
@@ -12,7 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -22,6 +22,8 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class InfluxInsertService {
 
+    //每次提交数量
+    private final int batchCount = 20000;
 
     private InfluxDB influxDB;
 
@@ -53,6 +55,7 @@ public class InfluxInsertService {
         }
     }
 */
+
     /**
      * 保存数据，采用默认数据保留策略(默认保留 168h)
      *
@@ -68,14 +71,19 @@ public class InfluxInsertService {
             }
         }
         BatchPoints batchPoints = builder.build();
-        valueMapList.forEach(valueMap -> {
+        for (int i = 0; i < valueMapList.size(); i++) {
             Point.Builder pointBuilder = Point.measurement(InfluxDBConstants.MEASUREMENT_NAME);
-            pointBuilder.fields(valueMap).time(System.nanoTime(), TimeUnit.NANOSECONDS);
+            pointBuilder.fields(valueMapList.get(i)).time(System.nanoTime(), TimeUnit.NANOSECONDS);
             Point point = pointBuilder.build();
             batchPoints.point(point);
-        });
-        System.out.println(batchPoints.getPoints().size());
-        getInfluxDBConnection().write(batchPoints);
+            if (i == batchCount) {
+                getInfluxDBConnection().write(batchPoints);
+                batchPoints = builder.build();
+            }
+        }
+        if (batchPoints.getPoints().size() > 0) {
+            getInfluxDBConnection().write(batchPoints);
+        }
         sum += valueMapList.size();
         log.debug("已写入" + sum + "条数据!");
         valueMapList.clear();
@@ -83,7 +91,7 @@ public class InfluxInsertService {
 
     private InfluxDB getInfluxDBConnection() {
         if (influxDB == null) {
-            influxDB = InfluxDBFactory.connect("http://192.168.10.11:32416", InfluxDBConstants.USER_NAME, InfluxDBConstants.PASSWORD);
+            influxDB = InfluxDBFactory.connect(applicationProperties.getInfluxDBUrl(), InfluxDBConstants.USER_NAME, InfluxDBConstants.PASSWORD);
             if (!influxDB.databaseExists(InfluxDBConstants.DB_NAME)) {
                 influxDB.createDatabase(InfluxDBConstants.DB_NAME);
             }
