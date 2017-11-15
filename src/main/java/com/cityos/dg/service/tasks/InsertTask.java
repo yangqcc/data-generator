@@ -49,7 +49,7 @@ public class InsertTask extends RecursiveAction {
     this.tableName = tableName;
     this.count = count;
     this.dataSource = dataSource;
-    this.threshold = (count - 1) / Runtime.getRuntime().availableProcessors() + 1;
+    this.threshold = (count - 1) / 10;
   }
 
   /**
