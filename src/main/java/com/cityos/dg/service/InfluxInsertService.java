@@ -15,6 +15,7 @@ import org.springframework.util.Assert;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -117,14 +118,12 @@ public class InfluxInsertService {
     }
 
     private InfluxDB getInfluxDBConnection() {
-        if (influxDB == null) {
-            influxDB = InfluxDBFactory.connect(applicationProperties.getInfluxDBUrl(), InfluxDBConstants.USER_NAME, InfluxDBConstants.PASSWORD);
-            if (!influxDB.databaseExists(InfluxDBConstants.DB_NAME)) {
-                influxDB.createDatabase(InfluxDBConstants.DB_NAME);
-            }
-            influxDB.setDatabase(InfluxDBConstants.DB_NAME);
-            influxDB.enableBatch(1000, 1000, TimeUnit.MILLISECONDS);
+        InfluxDB influxDB = InfluxDBFactory.connect(applicationProperties.getInfluxDBUrl(), InfluxDBConstants.USER_NAME, InfluxDBConstants.PASSWORD);
+        if (!influxDB.databaseExists(InfluxDBConstants.DB_NAME)) {
+            influxDB.createDatabase(InfluxDBConstants.DB_NAME);
         }
+        influxDB.setDatabase(InfluxDBConstants.DB_NAME);
+        influxDB.enableBatch(5000, 500, TimeUnit.MILLISECONDS, Executors.defaultThreadFactory());
         return influxDB;
     }
 }
