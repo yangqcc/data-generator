@@ -2,6 +2,7 @@ package com.cityos.dg.service;
 
 import com.cityos.dg.config.ApplicationProperties;
 import com.cityos.dg.config.InfluxDBConstants;
+import com.cityos.dg.utils.ExtraRandom;
 import lombok.extern.slf4j.Slf4j;
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -76,7 +78,7 @@ public class InfluxInsertService {
             pointBuilder.fields(valueMapList.get(i)).time(System.nanoTime(), TimeUnit.NANOSECONDS);
             Point point = pointBuilder.build();
             batchPoints.point(point);
-            if (i == batchCount) {
+            if (i % batchCount == 0) {
                 getInfluxDBConnection().write(batchPoints);
                 batchPoints = builder.build();
             }
@@ -87,6 +89,31 @@ public class InfluxInsertService {
         sum += valueMapList.size();
         log.debug("已写入" + sum + "条数据!");
         valueMapList.clear();
+    }
+
+    public void insert(int count) {
+        BatchPoints.Builder builder = BatchPoints.database(InfluxDBConstants.DB_NAME);
+        BatchPoints batchPoints = builder.build();
+        for (int i = 0; i < count; i++) {
+            Point.Builder pointBuilder = Point.measurement(InfluxDBConstants.MEASUREMENT_NAME);
+            pointBuilder.time(System.nanoTime(), TimeUnit.NANOSECONDS);
+            pointBuilder.addField("veh_license", ExtraRandom.nextString(30, "letter"));
+            pointBuilder.addField("bus_line_id", Integer.parseInt(ExtraRandom.nextString(9, "digit")));
+            pointBuilder.addField("ori_flag", "2");
+            pointBuilder.addField("run_state", "2");
+            pointBuilder.addField("station_id", Integer.parseInt(ExtraRandom.nextString(9, "digit")));
+            pointBuilder.addField("gps_report_dt", new Date().getTime());
+            Point point = pointBuilder.build();
+            batchPoints.point(point);
+            if (i % batchCount == 0) {
+                getInfluxDBConnection().write(batchPoints);
+                batchPoints = builder.build();
+                log.info("{},写入！", Thread.currentThread().getName());
+            }
+        }
+        if (batchPoints.getPoints().size() > 0) {
+            getInfluxDBConnection().write(batchPoints);
+        }
     }
 
     private InfluxDB getInfluxDBConnection() {

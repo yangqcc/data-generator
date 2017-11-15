@@ -3,7 +3,6 @@ package com.cityos.dg.service.tasks;/**
  */
 
 import com.cityos.dg.service.InfluxInsertService;
-import com.cityos.dg.utils.ExtraRandom;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import java.util.*;
 import java.util.concurrent.RecursiveAction;
 
 /**
@@ -57,19 +55,7 @@ public class InfluxDBInsertTask extends RecursiveAction {
     }
 
     private void insert() {
-        Map value;
-        List list = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            value = new HashMap<>();
-            value.put("veh_license", ExtraRandom.nextString(30, "letter"));
-            value.put("bus_line_id", Integer.parseInt(ExtraRandom.nextString(9, "digit")));
-            value.put("ori_flag", "2");
-            value.put("run_state", "2");
-            value.put("station_id", Integer.parseInt(ExtraRandom.nextString(9, "digit")));
-            value.put("gps_report_dt", new Date().getTime());
-            list.add(value);
-        }
-        influxInsertService.insert(null, list);
+        influxInsertService.insert(count);
     }
 
     @Override

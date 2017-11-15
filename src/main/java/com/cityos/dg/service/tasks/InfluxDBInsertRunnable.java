@@ -3,6 +3,7 @@ package com.cityos.dg.service.tasks;/**
  */
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,7 @@ import java.util.concurrent.ForkJoinTask;
 @Component(value = "influxdbInsertRunnable")
 @Scope(value = "prototype")
 @AllArgsConstructor
+@Slf4j
 public class InfluxDBInsertRunnable implements Runnable {
 
     private final InfluxDBInsertTask influxDBInsertTask;
@@ -22,10 +24,10 @@ public class InfluxDBInsertRunnable implements Runnable {
 
     @Override
     public void run() {
+        log.info("开始插入:" + influxDBInsertTask.getCount());
         long t1 = System.currentTimeMillis();
         ForkJoinTask forkJoinTask = forkJoinPool.submit(influxDBInsertTask);
         forkJoinTask.join();
-        System.out
-                .println("插入" + influxDBInsertTask.getCount() + "条数据,最终耗时:" + (System.currentTimeMillis() - t1));
+        log.info("插入" + influxDBInsertTask.getCount() + "条数据,最终耗时:" + (System.currentTimeMillis() - t1));
     }
 }
