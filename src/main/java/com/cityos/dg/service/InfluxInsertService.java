@@ -110,6 +110,7 @@ public class InfluxInsertService {
             batchPoints.point(point);
             if (i % batchCount == 0) {
                 getInfluxDBConnection().write(batchPoints);
+                builder = BatchPoints.database(InfluxDBConstants.DB_NAME);
                 batchPoints = builder.build();
                 log.info("{},写入！", Thread.currentThread().getName());
             }
