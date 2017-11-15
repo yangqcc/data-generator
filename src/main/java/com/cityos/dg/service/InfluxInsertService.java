@@ -9,6 +9,7 @@ import org.influxdb.InfluxDBFactory;
 import org.influxdb.dto.BatchPoints;
 import org.influxdb.dto.Point;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -22,11 +23,12 @@ import java.util.concurrent.TimeUnit;
  * Created by yangqc on 2017/7/27
  */
 @Service
+@Scope(scopeName = "prototype")
 @Slf4j
 public class InfluxInsertService {
 
     //每次提交数量
-    private final int batchCount = 10000;
+    private final int batchCount = 50000;
 
     private InfluxDB influxDB;
 
@@ -115,15 +117,18 @@ public class InfluxInsertService {
         if (batchPoints.getPoints().size() > 0) {
             getInfluxDBConnection().write(batchPoints);
         }
+
     }
 
     private InfluxDB getInfluxDBConnection() {
-        InfluxDB influxDB = InfluxDBFactory.connect(applicationProperties.getInfluxDBUrl(), InfluxDBConstants.USER_NAME, InfluxDBConstants.PASSWORD);
-        if (!influxDB.databaseExists(InfluxDBConstants.DB_NAME)) {
-            influxDB.createDatabase(InfluxDBConstants.DB_NAME);
+        if (influxDB == null) {
+            influxDB = InfluxDBFactory.connect(applicationProperties.getInfluxDBUrl(), InfluxDBConstants.USER_NAME, InfluxDBConstants.PASSWORD);
+            if (!influxDB.databaseExists(InfluxDBConstants.DB_NAME)) {
+                influxDB.createDatabase(InfluxDBConstants.DB_NAME);
+            }
+            influxDB.setDatabase(InfluxDBConstants.DB_NAME);
+            influxDB.enableBatch(1000, 500, TimeUnit.MILLISECONDS, Executors.defaultThreadFactory());
         }
-        influxDB.setDatabase(InfluxDBConstants.DB_NAME);
-        influxDB.enableBatch(1000, 500, TimeUnit.MILLISECONDS, Executors.defaultThreadFactory());
         return influxDB;
     }
 }
