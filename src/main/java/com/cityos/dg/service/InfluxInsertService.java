@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 public class InfluxInsertService {
 
     //每次提交数量
-    private final int batchCount = 20000;
+    private final int batchCount = 10000;
 
     private InfluxDB influxDB;
 
@@ -123,7 +123,7 @@ public class InfluxInsertService {
             influxDB.createDatabase(InfluxDBConstants.DB_NAME);
         }
         influxDB.setDatabase(InfluxDBConstants.DB_NAME);
-        influxDB.enableBatch(5000, 500, TimeUnit.MILLISECONDS, Executors.defaultThreadFactory());
+        influxDB.enableBatch(1000, 500, TimeUnit.MILLISECONDS, Executors.defaultThreadFactory());
         return influxDB;
     }
 }
