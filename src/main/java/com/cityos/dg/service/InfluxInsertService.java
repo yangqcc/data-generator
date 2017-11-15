@@ -95,6 +95,7 @@ public class InfluxInsertService {
     }
 
     public void insert(int count) {
+        InfluxDB influxDB = getInfluxDBConnection();
         BatchPoints.Builder builder = BatchPoints.database(InfluxDBConstants.DB_NAME);
         BatchPoints batchPoints = builder.build();
         for (int i = 0; i < count; i++) {
@@ -109,7 +110,9 @@ public class InfluxInsertService {
             Point point = pointBuilder.build();
             batchPoints.point(point);
             if (i % batchCount == 0) {
-                getInfluxDBConnection().write(batchPoints);
+                influxDB.write(batchPoints);
+                influxDB.close();
+                influxDB = getInfluxDBConnection();
                 builder = BatchPoints.database(InfluxDBConstants.DB_NAME);
                 batchPoints = builder.build();
                 log.info("{},写入！", Thread.currentThread().getName());
