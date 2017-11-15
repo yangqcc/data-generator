@@ -37,7 +37,7 @@ public class DataBaseOperateTimer {
         int insertCount = 300000000;
         InfluxDBInsertTask influxDBInsertTask = applicationContext
                 .getBean(InfluxDBInsertTask.class, insertCount,
-                        influxInsertService);
+                        influxInsertService, applicationContext);
         InfluxDBInsertRunnable insertRunnable = applicationContext
                 .getBean(InfluxDBInsertRunnable.class, influxDBInsertTask, forkJoinPool);
         insertRunnable.run();

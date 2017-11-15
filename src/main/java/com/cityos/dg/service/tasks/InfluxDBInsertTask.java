@@ -6,6 +6,7 @@ import com.cityos.dg.service.InfluxInsertService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -28,8 +29,10 @@ public class InfluxDBInsertTask extends RecursiveAction {
 
     private final int threshold;
 
+    private final ApplicationContext applicationContext;
+
     @Autowired
-    public InfluxDBInsertTask(int count, InfluxInsertService influxInsertService) {
+    public InfluxDBInsertTask(int count, InfluxInsertService influxInsertService, ApplicationContext applicationContext) {
         if (count <= 0) {
             throw new IllegalArgumentException("count不能小于0!");
         }
@@ -38,9 +41,10 @@ public class InfluxDBInsertTask extends RecursiveAction {
         this.count = count;
         //设置阈值
         this.threshold = (count + 1) / Runtime.getRuntime().availableProcessors();
+        this.applicationContext = applicationContext;
     }
 
-    private InfluxDBInsertTask(int count, InfluxInsertService influxInsertService, int threshold) {
+    private InfluxDBInsertTask(int count, InfluxInsertService influxInsertService, int threshold, ApplicationContext applicationContext) {
         if (count <= 0) {
             throw new IllegalArgumentException("count不能小于0!");
         }
@@ -52,6 +56,7 @@ public class InfluxDBInsertTask extends RecursiveAction {
         this.count = count;
         //设置阈值
         this.threshold = threshold;
+        this.applicationContext = applicationContext;
     }
 
     private void insert() {
@@ -64,8 +69,8 @@ public class InfluxDBInsertTask extends RecursiveAction {
             insert();
         } else {
             int middle = (count + 1) / 2;
-            InfluxDBInsertTask leftTask = new InfluxDBInsertTask(middle, influxInsertService, threshold);
-            InfluxDBInsertTask rightTask = new InfluxDBInsertTask(middle, influxInsertService, threshold);
+            InfluxDBInsertTask leftTask = new InfluxDBInsertTask(middle, applicationContext.getBean(InfluxInsertService.class), threshold, applicationContext);
+            InfluxDBInsertTask rightTask = new InfluxDBInsertTask(middle, applicationContext.getBean(InfluxInsertService.class), threshold, applicationContext);
             invokeAll(leftTask, rightTask);
             if (leftTask.isCompletedNormally() && rightTask.isCompletedNormally()) {
                 return;

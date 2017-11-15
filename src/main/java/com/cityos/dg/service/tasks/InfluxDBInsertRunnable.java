@@ -20,6 +20,7 @@ import java.util.concurrent.ForkJoinTask;
 public class InfluxDBInsertRunnable implements Runnable {
 
     private final InfluxDBInsertTask influxDBInsertTask;
+    
     private final ForkJoinPool forkJoinPool;
 
     @Override

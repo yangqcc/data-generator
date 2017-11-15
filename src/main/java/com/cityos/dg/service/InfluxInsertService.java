@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 public class InfluxInsertService {
 
     //每次提交数量
-    private final int batchCount = 50000;
+    private final int batchCount = 250000;
 
     private InfluxDB influxDB;
 
@@ -117,7 +117,6 @@ public class InfluxInsertService {
         if (batchPoints.getPoints().size() > 0) {
             getInfluxDBConnection().write(batchPoints);
         }
-
     }
 
     private InfluxDB getInfluxDBConnection() {
