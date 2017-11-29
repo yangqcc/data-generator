@@ -47,7 +47,7 @@ public class UpdateTask {
         .format("SELECT top 100 StationID FROM %s order by StationID desc ", tableName);
     String updateSql =
         String.format(
-            "delete %s SET PositionName=?,Grade=?,Address=?,Longitude=?,Latitude=?,SystemDateTime=?,RegionID=?,"
+            "update %s SET PositionName=?,Grade=?,Address=?,Longitude=?,Latitude=?,SystemDateTime=?,RegionID=?,"
                 + "Sequence=?,区域内码=?,区域计算=?,对外公开=?,异常短信=?,Longitude_BD=?,Latitude_BD=? where StationID = ?",
             tableName);
     Connection connection = null;
