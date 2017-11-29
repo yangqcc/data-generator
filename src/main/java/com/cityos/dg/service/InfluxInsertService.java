@@ -106,7 +106,7 @@ public class InfluxInsertService {
             pointBuilder.addField("ori_flag", "2");
             pointBuilder.addField("run_state", "2");
             pointBuilder.addField("station_id", Integer.parseInt(ExtraRandom.nextString(9, "digit")));
-            pointBuilder.addField("gps_report_dt", new Date().getTime());
+            pointBuilder.addField("gps_report_dt", System.currentTimeMillis());
             Point point = pointBuilder.build();
             batchPoints.point(point);
             if (i % batchCount == 0) {

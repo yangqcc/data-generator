@@ -12,8 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
- * <p>title:</p>
- * <p>description:定时任务</p>
+ * <p>title:</p> <p>description:定时任务</p>
  *
  * @author yangqc
  * @date Created in 2017-11-03
@@ -51,7 +50,7 @@ public class DataBaseOperateTimer {
   /**
    * 每小时跟新一百条数据
    */
-  @Scheduled(initialDelay = 1000 * 10, fixedRate = 1000 * 60 * 60)
+  @Scheduled(initialDelay = 1000 * 60 * 5, fixedRate = 1000 * 60 * 60)
   public void update() {
     UpdateTask updateTask = applicationContext
         .getBean(UpdateTask.class, TABLE_NAME,
@@ -62,7 +61,7 @@ public class DataBaseOperateTimer {
   /**
    * 每小时删除一百条数据
    */
-  @Scheduled(initialDelay = 1000 * 15, fixedRate = 1000 * 60 * 60)
+  @Scheduled(initialDelay = 1000 * 60 * 10, fixedRate = 1000 * 60 * 60)
   public void delete() {
     DeleteTask deleteTask = applicationContext
         .getBean(DeleteTask.class, TABLE_NAME,
