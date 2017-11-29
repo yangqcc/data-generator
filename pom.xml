@@ -29,6 +29,7 @@
     <lombok.version>1.16.10</lombok.version>
     <logback.version>1.1.9</logback.version>
     <springfox.version>2.4.0</springfox.version>
+    <influxdb.version>2.7</influxdb.version>
   </properties>
 
   <dependencies>
@@ -85,6 +86,12 @@
       <groupId>com.alibaba</groupId>
       <artifactId>druid</artifactId>
       <version>1.0.25</version>
+    </dependency>
+    <!-- influxDB -->
+    <dependency>
+      <groupId>org.influxdb</groupId>
+      <artifactId>influxdb-java</artifactId>
+      <version>${influxdb.version}</version>
     </dependency>
   </dependencies>
 

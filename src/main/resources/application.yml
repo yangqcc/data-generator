@@ -36,7 +36,7 @@ spring:
 
 server:
   address: "${HTTP_BIND_ADDRESS:0.0.0.0}"
-  port: "${HTTP_BIND_PORT:8888}"
+  port: "${HTTP_BIND_PORT:8000}"
 
 application:
   cors:
@@ -48,3 +48,5 @@ application:
     corePoolSize: 2
     maxPoolSize: 50
     queueCapacity: 1000
+  #influxdb 地址
+  influxDB-url: "http://192.168.10.11:32416"
