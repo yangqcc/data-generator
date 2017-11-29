@@ -2,11 +2,11 @@ package com.cityos.dg.service.tasks;
 
 import com.cityos.dg.utils.ExtraRandom;
 import com.cityos.dg.utils.RandomChinese;
-import com.cityos.dg.utils.RandomEmail;
+import com.cityos.dg.utils.RandomPhoneNum;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.RecursiveAction;
 import javax.sql.DataSource;
@@ -77,10 +77,10 @@ public class InsertTask extends RecursiveAction {
     long startTime = System.currentTimeMillis();
     Connection connection = null;
     PreparedStatement ps = null;
-    Date date = new Date();
     int i = 0;
     String sql = String.format(
-        "insert into %s (chsname,enname,birthday,age,weight,salary,sex,email) values(?,?,?,?,?,?,?,?)",
+        "insert into %s (PositionName,Grade,Address,Longitude,Latitude,SystemDateTime,RegionID,"
+            + "Sequence,区域内码,区域计算,对外公开,异常短信,Longitude_BD,Latitude_BD) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
         tableName);
     try {
       connection = dataSource.getConnection();
@@ -88,13 +88,19 @@ public class InsertTask extends RecursiveAction {
       ps = connection.prepareStatement(sql);
       for (; i < count; i++) {
         ps.setString(1, RandomChinese.nextString(10));
-        ps.setString(2, ExtraRandom.nextString(20, "letter"));
-        ps.setDate(3, new java.sql.Date(date.getTime()));
-        ps.setInt(4, getRandomAge());
-        ps.setFloat(5, random.nextFloat());
-        ps.setDouble(6, Math.random() + 12);
-        ps.setBoolean(7, true);
-        ps.setString(8, RandomEmail.nextEmail());
+        ps.setInt(2, random.nextInt(10));
+        ps.setString(3, RandomChinese.nextString(10));
+        ps.setBigDecimal(4, new BigDecimal(random.nextInt(1000)));
+        ps.setBigDecimal(5, new BigDecimal(random.nextInt(1000)));
+        ps.setDate(6, new java.sql.Date(System.currentTimeMillis()));
+        ps.setInt(7, random.nextInt());
+        ps.setInt(8, random.nextInt());
+        ps.setString(9, ExtraRandom.nextString(10, "letter"));
+        ps.setBoolean(10, true);
+        ps.setBoolean(11, false);
+        ps.setString(12, RandomPhoneNum.nextPhoneNum());
+        ps.setBigDecimal(13, new BigDecimal(random.nextInt()));
+        ps.setBigDecimal(14, new BigDecimal(random.nextInt()));
         ps.addBatch();
         if (i % executeBatchCount == 0) {
           ps.executeBatch();
@@ -103,6 +109,7 @@ public class InsertTask extends RecursiveAction {
       }
       ps.executeBatch();
       connection.commit();
+      connection.setAutoCommit(true);
     } catch (SQLException e) {
       throw new RuntimeException(e.getMessage());
     } finally {

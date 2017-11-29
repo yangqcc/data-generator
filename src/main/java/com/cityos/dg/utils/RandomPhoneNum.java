@@ -14,7 +14,7 @@ public class RandomPhoneNum {
    *
    * @return 一个随机手机号码
    */
-  public static String nextPhoneNum() throws Exception {
+  public static String nextPhoneNum() {
     String ret;
     final String[] suffix = new String[]{"13", "18", "15"};
     Random random = new Random();

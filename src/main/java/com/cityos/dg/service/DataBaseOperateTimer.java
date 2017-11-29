@@ -1,7 +1,9 @@
 package com.cityos.dg.service;
 
+import com.cityos.dg.service.tasks.DeleteTask;
 import com.cityos.dg.service.tasks.InsertRunnable;
 import com.cityos.dg.service.tasks.InsertTask;
+import com.cityos.dg.service.tasks.UpdateTask;
 import java.util.concurrent.ForkJoinPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -10,7 +12,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
- * <p>title:</p> <p>description:定时任务</p>
+ * <p>title:</p>
+ * <p>description:定时任务</p>
  *
  * @author yangqc
  * @date Created in 2017-11-03
@@ -28,24 +31,16 @@ public class DataBaseOperateTimer {
   @Autowired
   private ForkJoinPool forkJoinPool;
 
-/*  @Scheduled(fixedRate = 10000)
-  public void timerRate() {
-
-  }*/
-
-  //每天20点16分50秒时执行
-/*  @Scheduled(cron = "50 16 20 * * ?")
-  public void timerCron() {
-  }*/
+  private static final String TABLE_NAME = "dbo.EC_Station";
 
   /**
-   * 每晚23点执行操作 插入十万条数据
+   * 每小时执行操作 插入一万条数据
    */
-  @Scheduled(cron = "0 0 23 * * ?")
+  @Scheduled(initialDelay = 1000, fixedRate = 1000 * 60 * 60)
   public void insertUser1() {
-    int insertCount = 100000;
+    int insertCount = 10000;
     InsertTask insertTask = applicationContext
-        .getBean(InsertTask.class, "t_user1", insertCount,
+        .getBean(InsertTask.class, TABLE_NAME, insertCount,
             jdbcTemplate.getDataSource());
     InsertRunnable insertRunnable = applicationContext
         .getBean(InsertRunnable.class, insertTask, forkJoinPool);
@@ -54,33 +49,26 @@ public class DataBaseOperateTimer {
   }
 
   /**
-   * 每晚22点执行操作 插入一百万条数据
+   * 每小时跟新一百条数据
    */
-  @Scheduled(cron = "0 0 22 * * ?")
-  public void insertUser2() {
-    int insertCount = 1000000;
-    InsertTask insertTask = applicationContext
-        .getBean(InsertTask.class, "t_user2", insertCount,
+  @Scheduled(initialDelay = 1000 * 10, fixedRate = 1000 * 60 * 60)
+  public void update() {
+    UpdateTask updateTask = applicationContext
+        .getBean(UpdateTask.class, TABLE_NAME,
             jdbcTemplate.getDataSource());
-    InsertRunnable insertRunnable = applicationContext
-        .getBean(InsertRunnable.class, insertTask, forkJoinPool);
-    insertRunnable.run();
-
+    updateTask.update();
   }
 
   /**
-   * 每晚21点执行操作 插入一千万条数据
+   * 每小时删除一百条数据
    */
-  @Scheduled(cron = "0 0 21 * * ?")
-  public void insertUser3() {
-    int insertCount = 10000000;
-    InsertTask insertTask = applicationContext
-        .getBean(InsertTask.class, "t_user3", insertCount,
+  @Scheduled(initialDelay = 1000 * 15, fixedRate = 1000 * 60 * 60)
+  public void delete() {
+    DeleteTask deleteTask = applicationContext
+        .getBean(DeleteTask.class, TABLE_NAME,
             jdbcTemplate.getDataSource());
-    InsertRunnable insertRunnable = applicationContext
-        .getBean(InsertRunnable.class, insertTask, forkJoinPool);
-    insertRunnable.run();
-
+    deleteTask.delete();
   }
+
 
 }
