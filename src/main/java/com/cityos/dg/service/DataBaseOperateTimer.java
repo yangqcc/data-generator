@@ -33,11 +33,11 @@ public class DataBaseOperateTimer {
   private static final String TABLE_NAME = "dbo.EC_Station";
 
   /**
-   * 每小时执行操作 插入一万条数据
+   * 每小时执行操作 插入一百五十条数据
    */
-  @Scheduled(initialDelay = 1000, fixedRate = 1000 * 60 * 60)
+  @Scheduled(initialDelay = 1000, fixedRate = 1000 * 60 * 5)
   public void insertUser1() {
-    int insertCount = 1000;
+    int insertCount = 150;
     InsertTask insertTask = applicationContext
         .getBean(InsertTask.class, TABLE_NAME, insertCount,
             jdbcTemplate.getDataSource());
@@ -50,7 +50,7 @@ public class DataBaseOperateTimer {
   /**
    * 每小时跟新一百条数据
    */
-  @Scheduled(initialDelay = 1000 * 60 * 5, fixedRate = 1000 * 60 * 60)
+  @Scheduled(initialDelay = 1000 * 60 * 2, fixedRate = 1000 * 60 * 5)
   public void update() {
     UpdateTask updateTask = applicationContext
         .getBean(UpdateTask.class, TABLE_NAME,
@@ -61,13 +61,12 @@ public class DataBaseOperateTimer {
   /**
    * 每小时删除一百条数据
    */
-  @Scheduled(initialDelay = 1000 * 60 * 10, fixedRate = 1000 * 60 * 60)
+  @Scheduled(initialDelay = 1000 * 60 * 4, fixedRate = 1000 * 60 * 5)
   public void delete() {
     DeleteTask deleteTask = applicationContext
         .getBean(DeleteTask.class, TABLE_NAME,
             jdbcTemplate.getDataSource());
     deleteTask.delete();
   }
-
 
 }
