@@ -37,7 +37,7 @@ public class DataBaseOperateTimer {
    */
   @Scheduled(initialDelay = 1000, fixedRate = 1000 * 60 * 5)
   public void insertUser1() {
-    int insertCount = 150;
+    int insertCount = 200;
     InsertTask insertTask = applicationContext
         .getBean(InsertTask.class, TABLE_NAME, insertCount,
             jdbcTemplate.getDataSource());
