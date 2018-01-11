@@ -20,7 +20,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by yangqc on 2017/7/27
+ * @author yangqc
  */
 @Service
 @Scope(scopeName = "prototype")
@@ -36,30 +36,6 @@ public class InfluxInsertService {
     private ApplicationProperties applicationProperties;
 
     private long sum = 0;
-
-   /* public static void main(String[] args) throws InterruptedException {
-        InfluxInsertService influxInsertService = new InfluxInsertService();
-        Map tagsMap = new HashMap<>();
-        tagsMap.put("ori_flag", "true");
-        Map value;
-        List list = new ArrayList<>();
-        final int count = 500000;
-        while (true) {
-            for (int i = 0; i < count; i++) {
-                value = new HashMap<>();
-                value.put("veh_license", ExtraRandom.nextString(30, "letter"));
-                value.put("bus_line_id", Integer.parseInt(ExtraRandom.nextString(9, "digit")));
-                value.put("ori_flag", "2");
-                value.put("run_state", "2");
-                value.put("station_id", Integer.parseInt(ExtraRandom.nextString(9, "digit")));
-                value.put("gps_report_dt", new Date().getTime());
-                list.add(value);
-            }
-            influxInsertService.insert(null, list);
-            Thread.sleep(5000);
-        }
-    }
-*/
 
     /**
      * 保存数据，采用默认数据保留策略(默认保留 168h)

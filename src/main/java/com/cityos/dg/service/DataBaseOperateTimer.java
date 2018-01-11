@@ -8,7 +8,6 @@ import java.util.concurrent.ForkJoinPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
@@ -35,7 +34,7 @@ public class DataBaseOperateTimer {
   /**
    * 每小时执行操作 插入一百五十条数据
    */
-  @Scheduled(initialDelay = 1000, fixedRate = 1000 * 60 * 5)
+//  @Scheduled(initialDelay = 1000, fixedRate = 1000 * 60 * 5)
   public void insertUser1() {
     int insertCount = 200;
     InsertTask insertTask = applicationContext
@@ -50,7 +49,7 @@ public class DataBaseOperateTimer {
   /**
    * 每小时跟新一百条数据
    */
-  @Scheduled(initialDelay = 1000 * 60 * 2, fixedRate = 1000 * 60 * 5)
+//  @Scheduled(initialDelay = 1000 * 60 * 2, fixedRate = 1000 * 60 * 5)
   public void update() {
     UpdateTask updateTask = applicationContext
         .getBean(UpdateTask.class, TABLE_NAME,
@@ -61,7 +60,7 @@ public class DataBaseOperateTimer {
   /**
    * 每小时删除一百条数据
    */
-  @Scheduled(initialDelay = 1000 * 60 * 4, fixedRate = 1000 * 60 * 5)
+//  @Scheduled(initialDelay = 1000 * 60 * 4, fixedRate = 1000 * 60 * 5)
   public void delete() {
     DeleteTask deleteTask = applicationContext
         .getBean(DeleteTask.class, TABLE_NAME,
