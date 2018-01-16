@@ -23,6 +23,6 @@ public class InfluxDBConstants {
     /**
      * measurement名称
      */
-    public static final String MEASUREMENT_NAME = "threshold";
+    public static final String MEASUREMENT_NAME = "test_data";
 
 }
