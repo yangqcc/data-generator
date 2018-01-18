@@ -29,7 +29,7 @@ public class InfluxdbOperateTimer {
 
   @Scheduled(initialDelay = 3000, fixedRate = 1000 * 60 * 24)
   public void timerRate() {
-    int insertCount = 30000;
+    int insertCount = 3000;
     InfluxDBInsertTask influxDBInsertTask = applicationContext
         .getBean(InfluxDBInsertTask.class, insertCount,
             influxInsertService, applicationContext);

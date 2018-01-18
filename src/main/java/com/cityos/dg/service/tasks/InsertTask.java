@@ -88,7 +88,7 @@ public class InsertTask extends RecursiveAction {
       ps = connection.prepareStatement(sql);
       for (; i < count; i++) {
         ps.setString(1, RandomChinese.nextString(10));
-        ps.setInt(2, random.nextInt(10));
+        ps.setString(2, new Integer(random.nextInt(10)).toString());
         ps.setString(3, RandomChinese.nextString(10));
         ps.setBigDecimal(4, new BigDecimal(random.nextInt(1000)));
         ps.setBigDecimal(5, new BigDecimal(random.nextInt(1000)));
